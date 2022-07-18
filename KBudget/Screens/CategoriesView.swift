@@ -1,8 +1,9 @@
 //
 //  CategoriesView.swift
-//  KBudget
+//  XBudget
 //
 //  Created by Stefano Bertoli on 12/10/20.
+//  Modified by Chris Vergilio on 07/17/22.
 //
 
 import SwiftUI
@@ -35,7 +36,7 @@ struct CategoryCell:View{
     //Init
     init(cat:CDCategory, period:Int) {
         self.cat = cat
-        self.days = period
+        days = period
     }
     
     @ViewBuilder
@@ -62,11 +63,11 @@ struct CategoryCell:View{
                         Spacer()
                         
                         //Total value
-                        Text("\(valWithCurr(self.cat.getNetTotal(lastNDays: self.days)))").font(.title2).bold()
+                        Text("\(valWithCurr(cat.getNetTotal(lastNDays: days)))").font(.title2).bold()
                     }
                     
                     //Expanded transactions detail
-                    if self.expanded{
+                    if expanded{
                         ForEach(cat.getTransactionsOfLastNDays(days), id:\.id){ t in
                             HStack{
                                 //Note and Date
@@ -103,7 +104,7 @@ struct CategoryCell:View{
             
             //Edit category sheet
             .sheet(isPresented: self.$showingEditSheet, content: {
-                NewCategoryView(bind:self.$showingEditSheet, existingCategory:self.cat)
+                NewCategoryView(bind:self.$showingEditSheet, existingCategory: cat)
             })
             
             //Edit/delete action sheet
@@ -158,7 +159,7 @@ struct CategoriesView: View {
                     
                     //Categories
                     ForEach(man.categories){cat in
-                        CategoryCell(cat: cat, period: periods[self.selectedPeriod].0)
+                        CategoryCell(cat: cat, period: periods[selectedPeriod].0)
                     }
                     
                     //New category button

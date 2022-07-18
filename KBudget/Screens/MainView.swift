@@ -1,13 +1,12 @@
 //
 //  NewTransactionView.swift
-//  KBudget
+//  XBudget
 //
 //  Created by Stefano Bertoli on 07/10/20.
+//  Modified by Chris Vergilio on 07/17/22.
 //
 
 import SwiftUI
-
-
 
 struct newTransactionButton:View{
     @Binding var bind:Bool
@@ -26,13 +25,13 @@ struct newTransactionButton:View{
         self.type = type
         _bind = bind
         if type == .expense{
-            self.col = ColorNames.Red
-            self.icon = "tray.and.arrow.up"
-            self.totalFunc = getTodayExpenses
+            col = ColorNames.Red
+            icon = "tray.and.arrow.up"
+            totalFunc = getTodayExpenses
         }else{
-            self.col = ColorNames.Green
-            self.icon = "tray.and.arrow.down"
-            self.totalFunc = getTodayIncomes
+            col = ColorNames.Green
+            icon = "tray.and.arrow.down"
+            totalFunc = getTodayIncomes
         }
     }
     
@@ -69,12 +68,6 @@ struct newTransactionButton:View{
     }
 }
 
-
-
-
-
-
-
 struct MainView: View {
     @ObservedObject var man = DataManager.shared
 
@@ -93,7 +86,7 @@ struct MainView: View {
                 
                 //Transactions count
                 Text("Transactions count").font(.title2)
-                Text("\(man.transactions.filter({ (t) -> Bool in return Calendar.current.isDateInToday(t.date!) }).count)").font(.title).bold()
+                Text("\(man.transactions.filter({ (t) -> Bool in Calendar.current.isDateInToday(t.date!) }).count)").font(.title).bold()
                 Spacer()
                 
                 //New Expense
@@ -115,26 +108,13 @@ struct MainView: View {
             })
             //Delete alert
             .alert(isPresented: self.$infoAlertShown, content: {
-                Alert(title: Text("Info"), message:Text("If you are reading this, you have probably just started using KBudget.\n\nTo register a new expense or income, tap the icons in the main view.\n\nTo create your custom categories go into the second page.\n\nTo review and analyse your data check third and fourth page."))
+                Alert(title: Text("Info"), message:Text("If you are reading this, you have probably just started using XBudget.\n\nTo register a new expense or income, tap the icons in the main view.\n\nTo create your custom categories go into the second page.\n\nTo review and analyse your data check third and fourth page."))
             })
             .padding()
-            .navigationTitle("KBudget")
+            .navigationTitle("XBudget")
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #if DEBUG
 struct MainView_Previews: PreviewProvider {

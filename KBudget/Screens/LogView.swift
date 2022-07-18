@@ -1,8 +1,9 @@
 //
 //  LogView.swift
-//  KBudget
+//  XBudget
 //
 //  Created by Stefano Bertoli on 07/10/20.
+//  Modified by Chris Vergilio on 07/17/22.
 //
 
 import SwiftUI
@@ -72,7 +73,7 @@ struct LogCell:View{
     var body: some View{
         Button(action: {
             withAnimation(Animation.easeInOut(duration: 0.25)){
-                if self.group.transactions.count>0{
+                if group.transactions.count>0{
                     self.expanded.toggle()
                 }
             }
@@ -83,12 +84,12 @@ struct LogCell:View{
                     Text(group.title)
                         .font(Font.body.monospacedDigit())
                     Spacer()
-                    Text("\(valWithCurr(group.transactions.reduce(0, { (curr, next) -> Float in return curr+next.value})))")
+                    Text("\(valWithCurr(group.transactions.reduce(0, { (curr, next) -> Float in curr + next.value })))")
                         .font(.title3).bold()
                 }
                 
                 //Expanded details
-                if self.expanded{
+                if expanded{
                     ForEach(group.transactions){ t in
                         HStack{
                             //Note and Date
@@ -147,7 +148,7 @@ struct LogView: View {
             let g = LogGroup(title: grp.0, transactions: grp.1)
             updatedGroups.append(g)}
         updatedGroups.sort { (a, b) -> Bool in
-            return a.transactions.first!.date! < b.transactions.first!.date!
+            a.transactions.first!.date! < b.transactions.first!.date!
         }
         return updatedGroups
     }
@@ -155,14 +156,14 @@ struct LogView: View {
     
     
     init() {
-        _groups = State(initialValue: self.updateGroups(withPeriod: LogPeriod.withTag(self.selectedPeriod), data: dataManager.transactions))
+        _groups = State(initialValue: updateGroups(withPeriod: LogPeriod.withTag(selectedPeriod), data: dataManager.transactions))
     }
     
     
     
     var body: some View {
         let bind = Binding<Int> { () -> Int in
-            return self.selectedPeriod
+            selectedPeriod
         } set: {
             self.selectedPeriod = $0
             self.groups = updateGroups(withPeriod: LogPeriod.withTag($0) , data: dataManager.transactions)
@@ -183,7 +184,7 @@ struct LogView: View {
                     .padding(.vertical, 16)
                     
                     //Group list
-                    ForEach(self.groups, id:\.title){ g in
+                    ForEach(groups, id:\.title){ g in
                         LogCell(group: g)
                     }
                 }

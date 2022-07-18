@@ -11,9 +11,9 @@ import Foundation
 extension CDCategory{
     func getNetTotal(lastNDays n:Int = -1)->Float{
         let refDate = n == -1 ? Date.distantPast : Date(timeIntervalSinceNow: -60*60*24*Double(n))
-        if let ts = self.transactions?.allObjects as? [CDTransaction]{
+        if let ts = transactions?.allObjects as? [CDTransaction]{
             return ts.reduce(0, { (curr, next) -> Float in
-                return curr + ( next.date!.timeIntervalSince(refDate) > 0 ? next.value : 0)
+                curr + (next.date!.timeIntervalSince(refDate) > 0 ? next.value : 0)
             })
         }else{return 0}
     }
@@ -21,9 +21,9 @@ extension CDCategory{
     
     func getTransactionsOfLastNDays(_ n:Int)->[CDTransaction]{
         let refDate = n == -1 ? Date.distantPast : Date(timeIntervalSinceNow: -60*60*24*Double(n))
-        if let ts = self.transactions?.allObjects as? [CDTransaction]{
+        if let ts = transactions?.allObjects as? [CDTransaction]{
             return ts.filter { (t) -> Bool in
-                return t.date!.timeIntervalSince(refDate) > 0
+                t.date!.timeIntervalSince(refDate) > 0
             }
         }else{return []}
     }

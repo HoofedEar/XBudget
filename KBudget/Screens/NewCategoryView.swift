@@ -1,8 +1,9 @@
 //
 //  NewCategoryView.swift
-//  KBudget
+//  XBudget
 //
 //  Created by Stefano Bertoli on 12/10/20.
+//  Modified by Chris Vergilio on 07/17/22.
 //
 
 import SwiftUI
@@ -116,15 +117,15 @@ struct NewCategoryView: View {
                     
                     //Save button
                     Button(action: {
-                        if self.name.isEmpty {
+                        if name.isEmpty {
                             self.nameAlertShown = true
                         }else{
-                            if self.existingCategory == nil{
-                                DataManager.shared.addCategory(name: self.name, color: self.color, icon: self.icon)
+                            if existingCategory == nil{
+                                DataManager.shared.addCategory(name: name, color: color, icon: icon)
                             }else{
-                                self.existingCategory?.name = self.name
-                                self.existingCategory?.color = self.color
-                                self.existingCategory?.icon = self.icon
+                                existingCategory?.name = name
+                                existingCategory?.color = color
+                                existingCategory?.icon = icon
                                 do{ try DataManager.shared.context.save()
                                     DataManager.shared.forceRefresh()
                                 }catch{print("CD ERROR: failed to sync updated category information")}
@@ -135,7 +136,7 @@ struct NewCategoryView: View {
                         Text("Save")
                             .font(.headline)
                             .frame(maxWidth:.infinity, minHeight:64)
-                            .background(ColorNames(rawValue: self.color)!.ToColor(theme:cs))
+                            .background(ColorNames(rawValue: color)!.ToColor(theme:cs))
                             .cornerRadius(10)
                             .foregroundColor(bgCol)
                     }
@@ -145,7 +146,7 @@ struct NewCategoryView: View {
                 .alert(isPresented: self.$nameAlertShown, content: {
                     Alert(title: Text("Warning"), message: Text("Please insert a name for this category"), dismissButton: .default(Text("Ok")))
                 })
-                .navigationTitle(self.existingCategory == nil ? "New Category" : "Edit Category")
+                .navigationTitle(existingCategory == nil ? "New Category" : "Edit Category")
             }
         }
     }

@@ -3,6 +3,7 @@
 //  KBudget
 //
 //  Created by Stefano Bertoli on 12/10/20.
+//  Modified by Chris Vergilio on 07/17/22.
 //
 
 import SwiftUI
@@ -44,18 +45,18 @@ struct CategoryListView:View{
                         
                         //Category name
                         Text(cat.name!)
-                            .font(cat.id == self.bind.id ? boldFont : normFont)
+                            .font(cat.id == bind.id ? boldFont : normFont)
                             .foregroundColor(ColorNames(rawValue: cat.color!)!.ToColor(theme:cs))
-                            .opacity(cat.id == self.bind.id ? 1 : 0.5)
+                            .opacity(cat.id == bind.id ? 1 : 0.5)
                         
                         //Checkmark
                         Spacer()
                         Image(systemName:"checkmark")
-                            .opacity(cat.id == self.bind.id ? 1 : 0)
+                            .opacity(cat.id == bind.id ? 1 : 0)
                     }
                     .padding(12)
                     .padding(.horizontal, 16)
-                    .background(Color(white: 0.5, opacity:  cat.id == self.bind.id ? 0.1 : 0))
+                    .background(Color(white: 0.5, opacity:  cat.id == bind.id ? 0.1 : 0))
                     .cornerRadius(16)
                     .contentShape(Rectangle())
                     .onTapGesture(count: 1, perform: {
@@ -102,10 +103,10 @@ struct NewTransactionView:View {
                             .frame(height:140)
                             .opacity(0)
                         
-                        Text("\(valWithCurr((Float(self.value) ?? 0)/100))")
+                        Text("\(valWithCurr((Float(value) ?? 0)/100))")
                             .font(.system(size: 72))
-                            .underline(self.valueFocussed!)
-                            .opacity(self.valueFocussed! && withUnderline ? 1 : 0.8)
+                            .underline(valueFocussed!)
+                            .opacity(valueFocussed! && withUnderline ? 1 : 0.8)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                             .allowsTightening(true)
@@ -125,8 +126,8 @@ struct NewTransactionView:View {
                     
                     //Save button
                     Button(action: {
-                        let v = (type == .expense ? -1 : 1) * (Float(self.value) ?? 0)/100
-                        man.addTransaction(value: v, note: self.note, category: self.catSelected)
+                        let v = (type == .expense ? -1 : 1) * (Float(value) ?? 0)/100
+                        man.addTransaction(value: v, note: note, category: catSelected)
                         self.bind.toggle()
                     }){
                         Text("Save \(type.rawValue)")

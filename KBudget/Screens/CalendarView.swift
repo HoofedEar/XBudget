@@ -1,8 +1,9 @@
 //
 //  CalendarView.swift
-//  KHabit
+//  XHabit
 //
 //  Created by Stefano Bertoli on 29/06/2020.
+//  Modified by Chris Vergilio on 07/17/22.
 //  Copyright © 2020 elkiwy. All rights reserved.
 //
 
@@ -19,7 +20,9 @@ struct Arc: Shape {
         return path
     }
     var animatableData: AnimatablePair<Double, Double> {
-        get { return AnimatablePair(startAngle, endAngle) }
+        get {
+            AnimatablePair(startAngle, endAngle)
+        }
         set { startAngle = newValue.first; endAngle = newValue.second }
     }
 }
@@ -29,7 +32,7 @@ struct Arc: Shape {
 struct CalendarHeader: View{
     var name: String
     var body: some View{
-        Text(self.name).frame(maxWidth: .infinity, maxHeight: 32).font(.headline)
+        Text(name).frame(maxWidth: .infinity, maxHeight: 32).font(.headline)
     }
 }
 
@@ -61,7 +64,7 @@ struct CalendarCell: View{
         self.date = date
         self.month = month
         _updater = updater
-        self.dateInCurrentMonth = Calendar.current.component(.month, from: self.date) == self.month
+        dateInCurrentMonth = Calendar.current.component(.month, from: self.date) == self.month
 
     }
     
@@ -75,7 +78,7 @@ struct CalendarCell: View{
     var body: some View{
         //Listen for updates on selectedDate and updates the animation
         let _ = Binding<Bool>(get: { () -> Bool in
-            let selected = Calendar.current.isDate(self.selectedDate, inSameDayAs: self.date)
+            let selected = Calendar.current.isDate(selectedDate, inSameDayAs: date)
             DispatchQueue.main.async {
                 withAnimation(animation){
                     self.animValue = selected ? 360 : 0
@@ -93,14 +96,14 @@ struct CalendarCell: View{
         //Actual body
         return Button(action: {
             withAnimation(Animation.easeInOut(duration: 0.25)){
-                self.selectedDate = self.date
+                self.selectedDate = date
             }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }) {
             VStack{
-                Text("\(Calendar.current.component(.day, from: self.date))").font(.headline)
-                Text("\(valWithCurr(self.value, withDecimals: false))").font(.caption)
-                    .opacity(self.value == 0 ? 0 : 1)
+                Text("\(Calendar.current.component(.day, from: date))").font(.headline)
+                Text("\(valWithCurr(value, withDecimals: false))").font(.caption)
+                    .opacity(value == 0 ? 0 : 1)
             }
             .opacity(dateInCurrentMonth ? 1 : 0.25)
         }
@@ -108,11 +111,11 @@ struct CalendarCell: View{
         .frame(height: 48)
         .frame(maxWidth: .infinity)
         .overlay(
-            Arc(startAngle: self.startAngle, endAngle: self.startAngle + self.animValue, clockwise: false)
+            Arc(startAngle: startAngle, endAngle: startAngle + animValue, clockwise: false)
                 .stroke(ColorNames.Gray.ToColor(theme: cs), lineWidth: 2)
         )
         .onAppear(perform: {
-            self.value = DataManager.shared.getValueOfDay(self.date)
+            self.value = DataManager.shared.getValueOfDay(date)
         })
 
     }
@@ -135,24 +138,24 @@ struct CalendarView: View {
         _date = State(initialValue: date)
         let comps = Calendar.current.dateComponents([.month, .year], from: self.date)
         _firstOfTheMonth = State(initialValue: Calendar.current.date(from: comps))
-        let weekday = Calendar.current.component(.weekday, from: self.firstOfTheMonth)
+        let weekday = Calendar.current.component(.weekday, from: firstOfTheMonth)
         let offset:TimeInterval = Double((weekday + 7 - 2) % 7) * h24 * -1
-        _startingDate = State(initialValue: self.firstOfTheMonth.addingTimeInterval(offset))
+        _startingDate = State(initialValue: firstOfTheMonth.addingTimeInterval(offset))
         let df = DateFormatter(); df.dateFormat = "LLLL"
         _monthName = State(initialValue: df.string(from: self.date))
     }
     
     func update(){
-        let comps = Calendar.current.dateComponents([.month, .year], from: self.date)
+        let comps = Calendar.current.dateComponents([.month, .year], from: date)
         self.firstOfTheMonth = Calendar.current.date(from: comps)
-        let weekday = Calendar.current.component(.weekday, from: self.firstOfTheMonth)
+        let weekday = Calendar.current.component(.weekday, from: firstOfTheMonth)
         let offset:TimeInterval = Double((weekday + 7 - 2) % 7) * h24 * -1
-        self.startingDate = self.firstOfTheMonth.addingTimeInterval(offset)
+        self.startingDate = firstOfTheMonth.addingTimeInterval(offset)
         let df = DateFormatter()
         df.dateFormat = "LLLL"
-        self.monthName = df.string(from: self.date)
+        self.monthName = df.string(from: date)
         
-        let tmp = self.selectedDate
+        let tmp = selectedDate
         self.selectedDate = Date.distantFuture
         self.selectedDate = tmp
     }
@@ -163,8 +166,8 @@ struct CalendarView: View {
             HStack{
                 Button(action: {
                     //withAnimation(.easeInOut(duration:0.25)){
-                        self.date = Calendar.current.date(byAdding: .month, value: -1, to: self.date)!
-                        self.update()
+                        self.date = Calendar.current.date(byAdding: .month, value: -1, to: date)!
+                        update()
                     //}
                 }) {
                     Image(systemName: "chevron.left")
@@ -175,12 +178,12 @@ struct CalendarView: View {
                         .foregroundColor(fgCol)
                 }
                 Spacer()
-                Text(monthName + " " + String(Calendar.current.component(.year, from: self.date))).font(.title)
+                Text(monthName + " " + String(Calendar.current.component(.year, from: date))).font(.title)
                 Spacer()
                 Button(action: {
                     //withAnimation(.easeInOut(duration:0.25)){
-                        self.date = Calendar.current.date(byAdding: .month, value: 1, to: self.date)!
-                        self.update()
+                        self.date = Calendar.current.date(byAdding: .month, value: 1, to: date)!
+                        update()
                     //}
                 }) {
                     Image(systemName: "chevron.right")
@@ -201,13 +204,13 @@ struct CalendarView: View {
                 CalendarHeader(name:"Sat")
                 CalendarHeader(name:"Sun")
             }
-            ForEach(Range(0...5)){ i in
+            ForEach(Range(0...5), id:\.self){ i in
                 HStack(spacing:0){
-                    ForEach(Range(0...6)){j in
+                    ForEach(Range(0...6), id:\.self){j in
                         CalendarCell(updater: self.$monthName,
-                                     date: self.startingDate.addingTimeInterval(d7*Double(i) + h24 * Double(j)),
+                                     date: startingDate.addingTimeInterval(d7*Double(i) + h24 * Double(j)),
                                      selectedDate: self.$selectedDate,
-                                     month: Calendar.current.component(.month, from: self.date))
+                                     month: Calendar.current.component(.month, from: date))
                     }
                 }
             }
@@ -219,11 +222,11 @@ struct CalendarView: View {
                 })
                 .onEnded({ (v) in
                     if (v.translation.width > 0){
-                        self.date = Calendar.current.date(byAdding: .month, value: -1, to: self.date)!
+                        self.date = Calendar.current.date(byAdding: .month, value: -1, to: date)!
                     }else{
-                        self.date = Calendar.current.date(byAdding: .month, value:  1, to: self.date)!
+                        self.date = Calendar.current.date(byAdding: .month, value:  1, to: date)!
                     }
-                    self.update()
+                    update()
                 })
         )
     }
