@@ -176,6 +176,7 @@ struct CategoriesView: View {
             }
                     .navigationTitle("Categories")
         }
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

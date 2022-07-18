@@ -279,6 +279,7 @@ struct HistoryView: View {
                     //View title
                     .navigationBarTitle("History")
         }
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -290,6 +291,7 @@ struct CalendarView_Previews: PreviewProvider {
             HistoryView()
         }
                 .colorScheme(.dark)
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 #endif

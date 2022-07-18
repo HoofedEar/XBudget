@@ -193,6 +193,7 @@ struct LogView: View {
             }
                     .navigationTitle("Log")
         }
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

@@ -108,7 +108,8 @@ struct MainView: View {
                     .toolbar(content: {
                         ToolbarItem(placement: .primaryAction) {
                             Button(action: { self.infoAlertShown.toggle() }, label: {
-                                Text("Info")
+                                //Text("Info")
+                                Image(systemName: "info.circle")
                             })
                         }
                     })
@@ -119,6 +120,7 @@ struct MainView: View {
                     .padding()
                     .navigationTitle("XBudget")
         }
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

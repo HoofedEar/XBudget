@@ -171,6 +171,7 @@ struct NewTransactionView_Previews: PreviewProvider {
             NewTransactionView(type: .expense, bind: Binding.constant(true))
         }
                 .colorScheme(.dark)
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 #endif

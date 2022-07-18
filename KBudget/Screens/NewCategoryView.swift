@@ -145,6 +145,7 @@ struct NewCategoryView: View {
                         .navigationTitle(existingCategory == nil ? "New Category" : "Edit Category")
             }
         }
+                .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
