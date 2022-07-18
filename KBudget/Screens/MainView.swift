@@ -8,110 +8,116 @@
 
 import SwiftUI
 
-struct newTransactionButton:View{
-    @Binding var bind:Bool
-    
-    private var totalFunc:([CDTransaction])->Float
-    private var type:IncomeOrExpense
-    private var col:ColorNames
-    private var icon:String
-    
-    @ObservedObject var man:DataManager = DataManager.shared
-    private let imageSize:CGFloat = 64
+
+struct newTransactionButton: View {
+    @Binding var bind: Bool
+
+    private var totalFunc: ([CDTransaction]) -> Float
+    private var type: IncomeOrExpense
+    private var col: ColorNames
+    private var icon: String
+
+    @ObservedObject var man: DataManager = DataManager.shared
+    private let imageSize: CGFloat = 64
     @Environment(\.colorScheme) var cs
 
-    
-    init(type:IncomeOrExpense, bind:Binding<Bool>) {
+
+    init(type: IncomeOrExpense, bind: Binding<Bool>) {
         self.type = type
         _bind = bind
-        if type == .expense{
+        if type == .expense {
             col = ColorNames.Red
             icon = "tray.and.arrow.up"
             totalFunc = getTodayExpenses
-        }else{
+        } else {
             col = ColorNames.Green
             icon = "tray.and.arrow.down"
             totalFunc = getTodayIncomes
         }
     }
-    
-    var body: some View{
-        HStack{
+
+    var body: some View {
+        HStack {
             //Left Summary
-            VStack(alignment: .leading){
+            VStack(alignment: .leading) {
                 Text("New \(type.rawValue)").font(.title).bold().padding(.bottom).foregroundColor(col.ToColor(theme: cs))
                 Text("Today's \(type.rawValue)s:").font(.title3)
                 Text("\(valWithCurr(abs((type == .expense ? -1 : 1) * totalFunc(man.transactions))))").font(.title).bold()
-            }.padding()
+            }
+                    .padding()
             Spacer()
-            
+
             //Button
             Button(action: {
                 self.bind.toggle()
             }, label: {
-                
+
                 //Icon
                 Image(systemName: icon)
-                    .resizable()
-                    .renderingMode(.template)
-                    .foregroundColor(col.ToColor(theme: cs))
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: imageSize, height: imageSize)
-                    .padding(16)
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(col.ToColor(theme: cs))
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: imageSize, height: imageSize)
+                        .padding(16)
             })
-            .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(PlainButtonStyle())
         }
-        .padding(4)
-        .background(Color(white: 0.5, opacity: 0.1))
-        .addBorder(col.ToColor(theme: cs), width: 1, cornerRadius: 20)
-        .padding(4)
+                .padding(4)
+                .background(Color(white: 0.5, opacity: 0.1))
+                .addBorder(col.ToColor(theme: cs), width: 1, cornerRadius: 20)
+                .padding(4)
     }
 }
 
 struct MainView: View {
     @ObservedObject var man = DataManager.shared
 
-    @State var newExpense:Bool = false
-    @State var newIncome:Bool = false
-    @State var infoAlertShown:Bool = false
+    @State var newExpense: Bool = false
+    @State var newIncome: Bool = false
+    @State var infoAlertShown: Bool = false
 
     var body: some View {
-        NavigationView{
-            VStack(alignment:.center){
+        NavigationView {
+            VStack(alignment: .center) {
                 //Total
                 Text("Today's total").font(.title2)
                 Text("\(valWithCurr(getTodayIncomes(data: man.transactions) + getTodayExpenses(data: man.transactions)))").font(.title).bold()
-                    .padding(.bottom)
+                        .padding(.bottom)
                 Spacer()
-                
+
                 //Transactions count
                 Text("Transactions count").font(.title2)
                 Text("\(man.transactions.filter({ (t) -> Bool in Calendar.current.isDateInToday(t.date!) }).count)").font(.title).bold()
                 Spacer()
-                
+
                 //New Expense
-                newTransactionButton(type: .expense, bind:self.$newExpense)
-                    .sheet(isPresented: $newExpense) {NewTransactionView(type:.expense, bind:self.$newExpense)}
+                newTransactionButton(type: .expense, bind: self.$newExpense)
+                        .sheet(isPresented: $newExpense) {
+                            NewTransactionView(type: .expense, bind: self.$newExpense)
+                        }
                 Spacer()
-                
+
                 //New income
-                newTransactionButton(type: .income, bind:self.$newIncome)
-                    .sheet(isPresented: $newIncome) {NewTransactionView(type:.income, bind:self.$newIncome)}
+                newTransactionButton(type: .income, bind: self.$newIncome)
+                        .sheet(isPresented: $newIncome) {
+                            NewTransactionView(type: .income, bind: self.$newIncome)
+                        }
                 Spacer()
             }
-            .toolbar(content: {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {self.infoAlertShown.toggle()}, label: {
-                        Text("Info")
+                    .toolbar(content: {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button(action: { self.infoAlertShown.toggle() }, label: {
+                                Text("Info")
+                            })
+                        }
                     })
-                }
-            })
-            //Delete alert
-            .alert(isPresented: self.$infoAlertShown, content: {
-                Alert(title: Text("Info"), message:Text("If you are reading this, you have probably just started using XBudget.\n\nTo register a new expense or income, tap the icons in the main view.\n\nTo create your custom categories go into the second page.\n\nTo review and analyse your data check third and fourth page."))
-            })
-            .padding()
-            .navigationTitle("XBudget")
+                    //Delete alert
+                    .alert(isPresented: self.$infoAlertShown, content: {
+                        Alert(title: Text("Info"), message: Text("If you are reading this, you have probably just started using XBudget.\n\nTo register a new expense or income, tap the icons in the main view.\n\nTo create your custom categories go into the second page.\n\nTo review and analyse your data check third and fourth page."))
+                    })
+                    .padding()
+                    .navigationTitle("XBudget")
         }
     }
 }
